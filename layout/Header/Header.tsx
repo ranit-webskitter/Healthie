@@ -17,15 +17,24 @@ import { checkLoggedInServer, check_token, logout, setLoginData } from '@/rdux-t
 import { parseCookies } from 'nookies';
 import { toast } from 'react-toastify';
 import Link from 'next/link';
-const pages = ['Home','Products', 'Pricing', 'Blog','Login'];
-const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
+import { useQuery } from '@tanstack/react-query';
+import { fetchHomePageContent } from '@/api/functions/home.api';
+import { HomePageContent } from '@/typescript/interface/other-types';
+import { CardMedia } from '@mui/material';
+const pages = ['Home','Testimonials', 'Pricing', 'Contact','Login'];
+const settings = [ 'Dashboard','Change Password', 'Logout'];
 
 function ResponsiveAppBar() {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
   const dispatch = useDispatch();
   const {isLoggedIn}=useSelector((state :any)=>state.userSlice) 
-  console.log(isLoggedIn)
+  // console.log(isLoggedIn)
+  const { data: homePageContent, isLoading, isError } = useQuery<HomePageContent>({
+    queryKey: ['homePageContent'],
+    queryFn: fetchHomePageContent
+  });
+  
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
   };
@@ -50,10 +59,10 @@ function ResponsiveAppBar() {
     dispatch(check_token())
   },[dispatch,handleLogout])
   return (
-    <AppBar position="static">
+    <AppBar position="fixed">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-          <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
+          {/* <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} /> */}
         
           <Typography
             variant="h6"
@@ -70,7 +79,7 @@ function ResponsiveAppBar() {
               textDecoration: 'none',
             }}
           >
-            LOGO
+             <CardMedia component="img" src={homePageContent?.pageContents?.home_page_banner_logo} alt="" sx={{ objectFit: 'contain', height: '2rem' }} />
           </Typography>
 
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>

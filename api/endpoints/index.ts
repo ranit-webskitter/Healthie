@@ -14,10 +14,17 @@ export const endpoints = {
     register:'register',
     login:'login',
     forgotPassword:'forgot-password',
-    resetPassword: 'create-new-password'
+    resetPassword: 'create-new-password',
+    changePassword:'change-password'
   },
   cms: {
-    dashboard:'my-profile'
+    dashboard:'my-profile',
+    updateProfile:'update-profile',
+    homePageContent:'contents',
+    testimonials:'testimonials',
+    stateLists:'state-lists',
+    callback:'callback'
+
 }
 }
 
@@ -25,6 +32,12 @@ export const sucessNotificationEndPoints = [
         endpoints.auth.register,
         endpoints.auth.forgotPassword,
         endpoints.auth.resetPassword,
-        endpoints.cms.dashboard
+        endpoints.auth.changePassword,
+        endpoints.cms.dashboard,
+        endpoints.cms.updateProfile,
+        endpoints.cms.homePageContent,
+        endpoints.cms.testimonials,
+        endpoints.cms.stateLists,
+        endpoints.cms.callback
   
 ];

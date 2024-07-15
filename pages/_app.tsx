@@ -11,6 +11,8 @@ import { ToastContainer, toast } from 'react-toastify';
   import 'react-toastify/dist/ReactToastify.css';
 import { Provider } from "react-redux";
 import { store } from "@/rdux-toolkit/store/store";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 // Create a client
 const queryClient = new QueryClient()
 export default function App({ Component, pageProps }: AppProps) {
@@ -20,7 +22,7 @@ export default function App({ Component, pageProps }: AppProps) {
    {/* <MuiThemeProvider> */}
   
    <ToastContainer/>
-    <Component {...pageProps} />
+    <Component {...pageProps}/>
    {/* </MuiThemeProvider> */}
    </QueryClientProvider>
    </Provider>

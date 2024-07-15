@@ -42,7 +42,8 @@ export const userSlice = createSlice({
         
       }
 
-    }
+    },
+   
   },
 });
 

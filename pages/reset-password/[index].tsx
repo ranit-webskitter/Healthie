@@ -24,6 +24,7 @@ import dynamic from 'next/dynamic';
 import { json } from 'stream/consumers';
 import { useDispatch } from 'react-redux';
 import { setLoginData } from '@/rdux-toolkit/slices/userSlice';
+import { useRouter } from 'next/router';
 
 const Wrapper = dynamic(() => import("@/layout/wrapper/wrapper"));
 const defaultTheme = createTheme();
@@ -31,7 +32,15 @@ const defaultTheme = createTheme();
 
 
 export default function SignUp() {
+    const router=useRouter()
+    const params = router.query.index
 
+    let token:string, email:string | undefined;
+    if(typeof params === "string") {
+        token = params.split('&')[0].split('=')[1];
+
+        email = params.split('&')[1].split('=')[1];
+    }
     const queryClient = useQueryClient()
     const dispatch = useDispatch()
     const { register, handleSubmit, watch, formState: { errors }, reset } = useForm<IFormInput>();
@@ -47,7 +56,7 @@ export default function SignUp() {
             response?.data.statusCode === 200 && toast.success(response?.data?.message)
             queryClient.invalidateQueries({ queryKey: ['reset'] })
             response?.data.statusCode === 200 && reset()
-            
+            response?.data.statusCode === 200 && router.push('/login')
 
         },
         onError: (error) => {
@@ -59,8 +68,8 @@ export default function SignUp() {
 
     const onSubmit: SubmitHandler<IFormInput> = (data: IFormInput) => {
         const uploadData: IFormInput = {
-            token: '870741038dbee530ac6759a7bfb6c9b6b5173acd8746feed374c91a405d66031',
-            email: data?.email,
+            token: token,
+            email: email,
             password: data?.password,
         }
         mutation.mutate(uploadData)
@@ -102,6 +111,7 @@ export default function SignUp() {
                             </Typography>
                             <Box component="form" noValidate onSubmit={handleSubmit(onSubmit)} sx={{ mt: 1 }}>
                                 <TextField
+                                 defaultValue={email}
                                     margin="normal"
                                     multiline
                                     required
@@ -111,13 +121,15 @@ export default function SignUp() {
                                     autoComplete="email"
                                     autoFocus
                                     error={!!errors.email}
+                                   
+                                    disabled
                                     helperText={errors.email ? 'Email is required' : ''}
-                                    {...register("email", { required: true })}
-                                    InputProps={{
-                                        style: {
-                                            height: '50px',
-                                        },
-                                    }}
+                                    // {...register("email", { required: true })}
+                                    // InputProps={{
+                                    //     style: {
+                                    //         height: '50px',
+                                    //     },
+                                    // }}
                                 />
                                 <TextField
                                     margin="normal"

@@ -14,7 +14,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useForm, SubmitHandler } from "react-hook-form";
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { loginMutation, signUpMutation } from '@/api/functions/user.api';
+import { changePasswordMutation, loginMutation, signUpMutation } from '@/api/functions/user.api';
 import { IFormInput } from '@/typescript/interface/common.interface';
 import { Paper } from '@mui/material';
 import { toast } from 'react-toastify';
@@ -23,7 +23,7 @@ import { setCookie } from 'nookies';
 import dynamic from 'next/dynamic';
 import { json } from 'stream/consumers';
 import { useDispatch } from 'react-redux';
-import { setLoginData } from '@/rdux-toolkit/slices/userSlice';
+import { logout, setLoginData } from '@/rdux-toolkit/slices/userSlice';
 import { useRouter } from 'next/router';
 
 const Wrapper = dynamic(() => import("@/layout/wrapper/wrapper"));
@@ -38,7 +38,7 @@ export default function SignUp() {
     const { register, handleSubmit, watch, formState: { errors }, reset } = useForm<IFormInput>();
     const mutation = useMutation({
         mutationFn: async (data: IFormInput) => {
-            const response = await loginMutation(data)
+            const response = await changePasswordMutation(data)
             return response
         },
         onSuccess: (response) => {
@@ -47,20 +47,7 @@ export default function SignUp() {
             response?.data.statusCode === 200 && toast.success(response?.data?.message)
             queryClient.invalidateQueries({ queryKey: ['login'] })
             response?.data.statusCode === 200 && reset()
-            response?.data?.statusCode===200 && router.push('/')
-            response?.data && setCookie(null, `token`, response?.data?.token, {
-                maxAge: 30 * 24 * 60 * 60,
-                path: '/',
-            })
-         
-            // response?.data && setCookie(null,` ${process.env.NEXT_APP_PROJECT_NAME}`, response?.data?.token, {
-            //     maxAge: 30 * 24 * 60 * 60,
-            //     path: '/',
-            // })
-            // response?.data && setCookie(null, "user", JSON.stringify(response?.data?.data), {
-            //     maxAge: 30 * 24 * 60 * 60,
-            //     path: '/',
-            // })
+            response?.data?.statusCode===200 && dispatch(logout());
             
         },
         onError: (error) => {
@@ -72,10 +59,12 @@ export default function SignUp() {
 
     const onSubmit: SubmitHandler<IFormInput> = (data: IFormInput) => {
         const uploadData: IFormInput = {
-            email: data?.email,
+            old_password: data?.old_password,
             password: data?.password,
+            password_confirmation:data?.password_confirmation
         }
-        mutation.mutate(uploadData)
+         mutation.mutate(uploadData)
+       // console.log(uploadData)
     };
     return (
         <Wrapper>
@@ -111,18 +100,18 @@ export default function SignUp() {
 
                             <Box component="form" noValidate onSubmit={handleSubmit(onSubmit)} sx={{ mt: 3 }}>
                                 <Grid container spacing={2}>
-                                    <Grid item xs={12}>
+                                <Grid item xs={12}>
                                         <TextField
                                             required
                                             fullWidth
-                                            id="email"
-                                            label="Email Address"
-                                            {...register("email", { required: true, pattern: /^[A-Za-z0-9\._%+\-]+@[A-Za-z0-9\.\-]+\.[A-Za-z]{2,}/gm })}
-                                            autoComplete="email"
+                                            {...register("old_password", { required: true, pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/ })}
+                                            label="Old Password"
+                                            id="old_password"
                                         />
-                                        {errors.email && errors.email.type === 'required' && <p style={{ color: 'red' }}>This field is required</p>}
-                                        {errors.email && errors.email.type === 'pattern' && <p style={{ color: 'red' }}>Enter a Valid Email</p>}
+                                        {errors.password && errors.password.type === 'required' && <p style={{ color: 'red' }}>This field is required</p>}
+                                        {errors.password && errors.password.type === "pattern" && <p style={{ color: 'red' }}>Minimum eight characters, at least one uppercase letter, one lowercase letter,one Special charecter and one number</p>}
                                     </Grid>
+
 
                                     <Grid item xs={12}>
                                         <TextField
@@ -136,6 +125,18 @@ export default function SignUp() {
                                         {errors.password && errors.password.type === "pattern" && <p style={{ color: 'red' }}>Minimum eight characters, at least one uppercase letter, one lowercase letter,one Special charecter and one number</p>}
                                     </Grid>
 
+                                    <Grid item xs={12}>
+                                        <TextField
+                                            required
+                                            fullWidth
+                                            {...register("password_confirmation", { required: true, pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/ })}
+                                            label="Password Confirmation"
+                                            id="password_confirmation"
+                                        />
+                                        {errors.password && errors.password.type === 'required' && <p style={{ color: 'red' }}>This field is required</p>}
+                                        {errors.password && errors.password.type === "pattern" && <p style={{ color: 'red' }}>Minimum eight characters, at least one uppercase letter, one lowercase letter,one Special charecter and one number</p>}
+                                    </Grid>
+
                                 </Grid>
                                 <Button
                                     type="submit"
@@ -143,20 +144,9 @@ export default function SignUp() {
                                     variant="contained"
                                     sx={{ mt: 3, mb: 2 }}
                                 >
-                                    Sign In
+                                    Submit
                                 </Button>
-                                <Grid container justifyContent="flex-end">
-                                    <Grid item style={{ marginBottom: '2rem' }}>
-                                        <Link href="/register" >
-                                            Don't have an account? Sign Up
-                                        </Link>
-                                    </Grid>
-                                    <Grid item style={{ marginBottom: '2rem' }}>
-                                        <Link href="/forgot-password" >
-                                            Forgot Password
-                                        </Link>
-                                    </Grid>
-                                </Grid>
+                               
                             </Box>
                         </Box>
                     </Paper>

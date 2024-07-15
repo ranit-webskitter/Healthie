@@ -11,9 +11,11 @@ import {
     Divider,
     Card,
     Box,
+    Button,
 } from "@mui/material";
 import Wrapper from '@/layout/wrapper/wrapper'
 import { fetchDashboard } from "@/api/functions/user.api";
+import Link from "next/link";
 
 const Dashboard = () => {
     const dispatch = useDispatch<any>();
@@ -40,12 +42,13 @@ const Dashboard = () => {
                                             <Box py={4}>
                                                 <Avatar
                                                     alt="R"
-                                                    src=""
+                                                    src={userdashboard?.profile_photo}
                                                     style={{ width: 120, height: 120, margin: '0 auto', borderRadius: '50%' }}
                                                 />
-                                                <Typography variant="h4" component="div" className="text-white" style={{ marginTop: 16 }}>userName</Typography>
-                                                <Typography className="text-white">Email - email</Typography>
-                                                <Typography className="text-white">Contact No - phone</Typography>
+                                                <Button component={Link} href='/update-profile'  variant="contained" sx={{marginTop:'1rem'}}>Update Profile</Button>
+                                                <Typography variant="h4" component="div" className="text-white" style={{ marginTop: 16 }}>{userdashboard?.first_name} {userdashboard?.last_name}</Typography>
+                                                <Typography className="text-white">Email - {userdashboard?.email}</Typography>
+                                                <Typography className="text-white">Contact No - {userdashboard?.phone}</Typography>
 
                                             </Box>
                                         </Grid>
@@ -56,11 +59,11 @@ const Dashboard = () => {
                                                 <Grid container spacing={2}>
                                                     <Grid item xs={12} md={6}>
                                                         <Typography variant="h6" className="text-black">Email</Typography>
-                                                        <Typography>email</Typography>
+                                                        <Typography>{userdashboard?.email}</Typography>
                                                     </Grid>
                                                     <Grid item xs={12} md={6}>
                                                         <Typography variant="h6" className="text-black">Phone</Typography>
-                                                        <Typography className="text-black"></Typography>
+                                                        <Typography className="text-black">{userdashboard?.phone}</Typography>
                                                     </Grid>
                                                 </Grid>
                                             </CardContent>

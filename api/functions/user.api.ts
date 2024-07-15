@@ -83,10 +83,12 @@ export const  resetPasswordMutation = async (body: IFormInput) => {
   }
 };
 
-export const  fetchDashboard = async () => {
+
+export const  changePasswordMutation = async (body: IFormInput) => {
   try {
-    const res = await axiosInstance.get(
-        endpoints.cms.dashboard
+    const res = await axiosInstance.post<IgetSignUpQuery>(
+        endpoints.auth.changePassword,
+        body
       );
       return res;
   } catch (error : any) {
@@ -100,3 +102,40 @@ export const  fetchDashboard = async () => {
   }
 };
 
+export const  fetchDashboard = async () => {
+  try {
+    const res = await axiosInstance.get(
+        endpoints.cms.dashboard
+      );
+      return res?.data?.data?.user;
+  } catch (error : any) {
+    if(error instanceof AxiosError){
+        console.log(error)
+        if(error && error.response && error.response.data){
+            toast.error(error?.response?.data?.message)
+        }
+    }
+    
+  }
+};
+
+
+export const updateProfileMutation = async (body: IFormInput) => {
+  try {
+    const res = await axiosInstance.post<IgetSignUpQuery>(
+        endpoints.cms.updateProfile,
+        body
+      );
+     
+      return res;
+  } catch (error : any) {
+    if(error instanceof AxiosError){
+        console.log(error)
+        if(error && error.response && error.response.data){
+            toast.error(error?.response?.data?.message)
+        }
+       
+    }
+    
+  }
+};

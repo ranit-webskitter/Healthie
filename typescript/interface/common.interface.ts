@@ -392,11 +392,13 @@ export enum HttpStatusCode {
     password?: string;
     username?: string;
     phone?: string;
-    first_name?: string;
+    first_name?: string ;
     last_name?: string;
     country_code?: string;
     confirm_password?:string,
-    token?:string
+    token?:string,
+    old_password?:string,
+    password_confirmation?:string
   }
   
   export interface ButtonType {
